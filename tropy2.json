@@ -1,0 +1,108 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@vocab": "https://tropy.org/v1/tropy#",
+    "template": {
+      "@type": "@id"
+    },
+    "photo": {
+      "@id": "https://tropy.org/v1/tropy#photo",
+      "@container": "@list"
+    },
+    "note": {
+      "@id": "https://tropy.org/v1/tropy#note",
+      "@container": "@list"
+    },
+    "selection": {
+      "@id": "https://tropy.org/v1/tropy#selection",
+      "@container": "@list"
+    },
+    "title": "http://purl.org/dc/elements/1.1/title",
+    "date": {
+      "@id": "http://purl.org/dc/elements/1.1/date",
+      "@type": "https://tropy.org/v1/tropy#date"
+    }
+  },
+  "@graph": [
+    {
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "Courses 2012-2013 THEO 3850",
+      "date": "2012",
+      "list": [
+        "Courses"
+      ],
+      "tag": [
+        "course"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "1e848ce1f0e974af6f304a6e072a5dbf",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "IMG_2082 2.HEIC",
+          "mimetype": "image/heic",
+          "orientation": 3,
+          "page": 0,
+          "path": "/Users/jilliandombroski/Documents/honors project/Honors project archives images/Honors Project.tropy/assets/1e848ce1f0e974af6f304a6e072a5dbf.heic",
+          "protocol": "file",
+          "size": 2349065,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 90,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3024,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4032,
+          "title": "IMG_2082 2",
+          "date": 1730286846000,
+          "note": [
+            {
+              "@type": "Note",
+              "text": {
+                "@value": "theological and spiritual significance of human sexuality; discusses homosexuality",
+                "@language": "en"
+              },
+              "html": {
+                "@value": "<p>theological and spiritual significance of human sexuality; discusses homosexuality</p>",
+                "@language": "en"
+              }
+            }
+          ]
+        },
+        {
+          "@type": "Photo",
+          "checksum": "9ecf289f2084c1a41fda7aab58e49ed6",
+          "color": "rgb(216,216,216,1)",
+          "density": null,
+          "filename": "IMG_2083 2.HEIC",
+          "mimetype": "image/heic",
+          "orientation": 3,
+          "page": 0,
+          "path": "/Users/jilliandombroski/Documents/honors project/Honors project archives images/Honors Project.tropy/assets/9ecf289f2084c1a41fda7aab58e49ed6.heic",
+          "protocol": "file",
+          "size": 2275415,
+          "template": "https://tropy.org/v1/templates/photo",
+          "angle": 90,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 3024,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 4032,
+          "title": "IMG_2083 2",
+          "date": 1730286848000
+        }
+      ]
+    }
+  ],
+  "version": "1.16.2"
+}

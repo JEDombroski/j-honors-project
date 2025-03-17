@@ -1,62 +1,60 @@
-[
+const data =[
     {
-        "title": "Event 1",
-        "description": "Description of Event 1",
-        "themes": ["Theme A", "Theme B"]
+      "@type": "Item",
+      "template": "https://tropy.org/v1/templates/generic",
+      "title": "10_22_2007 Wheel Clippings",
+      "date": "2007-10-22",
+      "themes": [
+        "PRIDE",
+        "chalking",
+        "photos"
+      ],
+      "photo": [
+        {
+          "@type": "Photo",
+          "checksum": "ab7ed4d64c459fe2fd1822d6bd45d9a1",
+          "color": "rgb(232,232,232,1)",
+          "density": null,
+          "filename": "IMG_17612.HEIC",
+          "orientation": 6,
+          "page": 0,
+          "protocol": "file",
+          "size": 2669639,
+          "angle": 270,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 4032,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3024,
+          "date": 1729070423000,
+          "title": "Chalking and Button photos"
+        },
+        {
+          "@type": "Photo",
+          "checksum": "1216d008a65c3bd1bd33f32055590c1f",
+          "color": "rgb(216,216,216,1)",
+          "density": null,
+          "filename": "IMG_17622.HEIC",
+          "orientation": 6,
+          "page": 0,
+          "size": 2442938,
+          "angle": 270,
+          "brightness": 0,
+          "contrast": 0,
+          "height": 4032,
+          "hue": 0,
+          "mirror": false,
+          "negative": false,
+          "saturation": 0,
+          "sharpen": 0,
+          "width": 3024,
+          "date": 1729070430000,
+          "title": "Taking PRIDE in the Community"
+        }
+      ]
     },
-    {
-        "title": "Event 2",
-        "description": "Description of Event 2",
-        "themes": ["Theme B", "Theme C"]
-    },
-    {
-        "title": "Event 3",
-        "description": "Description of Event 3",
-        "themes": ["Theme A"]
-    },
-    {
-        "title": "Event 4",
-        "description": "Description of Event 3",
-        "themes": ["Theme A"]
-    },
-    {
-        "title": "Event 5",
-        "description": "Description of Event 3",
-        "themes": ["Theme A"]
-    },
-    {
-        "title": "Event 6",
-        "description": "Description of Event 3",
-        "themes": ["Theme A"]
-    },
-    {
-        "title": "Event 7",
-        "description": "Description of Event 3",
-        "themes": ["Theme A"]
-    },
-    {
-        "title": "Event 8",
-        "description": "Description of Event 3",
-        "themes": ["Theme A", "Theme B","Theme C"]
-    },
-    {
-        "title": "Event 9",
-        "description": "Description of Event 3",
-        "themes": ["Theme A","Theme B","Theme C","Theme D"]
-    },
-    {
-        "title": "Event 10",
-        "description": "Description of Event 3",
-        "themes": ["Theme A", "Theme C","Theme D"]
-    },
-    {
-        "title": "Event 11",
-        "description": "Description of Event 3",
-        "themes": ["Theme A", "Theme C","Theme D"]
-    },
-    {
-        "title": "Event 12",
-        "description": "Description of Event 3",
-        "themes": ["Theme D","Theme B"]
-    }
-]
+    ]

@@ -5,44 +5,246 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Exhibit</title>
     <style>
+       html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping of columns on smaller screens */
+}
+
+.left-column {
+    flex: 1 1 20%; /* Left column takes up 20% of space, flexible */
+    background-color: white;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+    overflow-wrap: break-word; /* Ensure text wraps properly */
+}
+
+.right-column {
+    flex: 1 1 80%; /* Right column takes up 80% of space, flexible */
+    height: 100%;
+    background-color: #f4f4f4;
+    position: relative;
+}
+
         svg {
             width: 100%;
-            height: 100vh;
-            border: 1px solid black;
+            height: 100%;
+            position: absolute; /* Ensure it fills the entire right column */
+            z-index: 0;
         }
-        .tooltip {
-            position: absolute;
-            display: none;
-            background: rgba(0, 0, 0, 0.7);
+        
+             /* Modal style */
+        #popupModal {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the modal */
+            background-color: rgba(203, 195, 227, 1); /* Slight transparency */
+            padding: 20px;
+            width: 900px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 9999; /* Ensure the modal is on top */
+            text-align: center;
+        }
+
+        /* Close button */
+        #closePopupBtn {
+            background-color: #25064c;
+            border: none;
             color: white;
-            padding: 5px;
+            padding: 10px;
+            cursor: pointer;
             border-radius: 5px;
-            font-size: 12px;
+            font-size: 16px;
+            margin-top: 10px;
         }
-        #event-list ul {
-            list-style-type: none;
-            padding: 0;
+
+        #closePopupBtn:hover {
+            background-color: #ff0000;
         }
+
+        .tooltip {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            position: absolute;
+            z-index: 10;
+        }
+        
+       #event-list h2,
+#theme-name {
+    font-size: 1.2em; /* Adjust the font size to be more readable */
+    word-wrap: break-word; /* Ensure long text wraps */
+}
+
+#event-list-items {
+    list-style-type: none;
+    padding: 0;
+}
+
+#event-list-items li {
+    margin: 5px 0;
+    word-wrap: break-word;
+}
+
+    
+    #eventModal {
+            display: none;  /* Hidden by default */
+            position: fixed; /* Fixed position to overlay on the screen */
+            top: 0%;
+            left: 25%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark background for modal */
+            z-index: 9999; /* Ensures modal is on top */
+            justify-content: center; /* Centers horizontally */
+            align-items: center; /* Centers vertically */
+            overflow: auto;
+        }
+
+        /* Modal content */
+        .modal-content {
+            position: fixed;
+            background-color: #fff;
+            padding: 20px;
+            max-width: 90%; /* Limit the width of the modal */
+            max-height: 90%; /* Limit the height of the modal */
+            overflow-y: auto; /* Allows scrolling if content overflows */
+        }
+
+   
+
+        /* Close button */
+        #closeBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 25px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Image styling */
+        #modalPhotos img {
+            width: 50%;
+            max-width: 50vh; 
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        /* Enlarge image on click */
+        #modalPhotos img.expanded {
+            width: 90%;
+            height: auto;
+            transform: scale(2); /* Increase scale to make it larger */
+            transition: transform 0.2s ease;
+        }
+        
+        #themeModal {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 20%;
+    left: 5%;
+    width: 80%;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    border-radius: 8px;
+}
+
+.theme-modal-content {
+    position: relative;
+    padding: 20px;
+}
+
+.close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
     </style>
+    
 </head>
 <body>
 
-    <h1>Interactive Exhibit</h1>
+
+   
     
-    <!-- This is where the SVG visualization will be rendered -->
-    <svg></svg>
+   <!-- Left column -->
+<div class="left-column">
+    <h1>Uncovering the Queer History of St. Kate's</h1>
+    <div id="event-list">
+
+        <div id="theme-name"></div>
+        <ul id="event-list-items"></ul>
+    </div>
+
+    <!-- New Theme Modal (Initially Hidden) -->
+    <div id="themeModal">
+        <div class="theme-modal-content">
+            <span id="closeThemeModal" class="close">&times;</span>
+            <h2 id="modalThemeTitle"></h2>
+            <p id="modalThemeBlurb"></p>
+            <p id="modalThemeExtra"></p>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Right column for SVG -->
+    <div class="right-column">
+        <!-- This is where the SVG visualization will be rendered -->
+        <svg></svg>
+    </div>
+    
+  <!-- Popup Modal -->
+    <div id="popupModal">
+        <h2>Welcome to this interactive exhibit! </h2>
+        <p>Here you will find items from the St. Catherine University archives reflecting the queer history of the college. 
+
+<p>The goal of this project is to explore how St. Catherine University’s intersecting identities as a Catholic, women’s, and social justice oriented institution have shaped the attitudes of its students, staff, faculty, and administration about LGBTQ+ issues and identities. Further, it aims to illuminate how having a queer identity impacted the experiences of students and to reevaluate the relationships that women at St. Kate’s engaged in, recognizing historical norms around acceptable women’s relationships but also uncovering examples now perceived as instances of queerness. The Catholic identity of the university played a large role in its official viewpoints, often to the detriment of public acceptance of LGBTQ+ identities, though relationships that can be read as queer in the current day have been present, if hidden, over a long period in spite of this. Goals to empower women with minority identities and commitments to social justice have driven St. Kate’s to be increasingly more inclusive over time, though there is still room to grow.<p>
+
+<b>Click on one of the larger labeled dots to see the items related to that theme. Hover over any of the smaller dots to see its title and date and click on it for more information and images of the document. Enjoy exploring!<p>
+        <button id="closePopupBtn">Close</button>
+    </div>
     
     <!-- Tooltip for displaying node information -->
     <div class="tooltip"></div>
 
-    <!-- Event list container -->
-    <div id="event-list">
-        <h2>Related Events:</h2>
-        <ul></ul>
+
+
+
+<!-- Modal Box -->
+<div id="eventModal" class="modal">
+    <div class="modal-content">
+        <span id="closeBtn" class="close">&times;</span> <!-- Close button -->
+        <h2 id="modalTitle"></h2> <!-- Event title -->
+        <p id="modalDate"></p> <!-- Event date -->
+        <p id="modalDescription"></p> <!-- Event description -->
+        <div id="modalPhotos"></div> <!-- Container for photos -->
     </div>
+</div>
+
+
 
     <!-- Link to the JavaScript file -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="script.js"></script> <!-- Link to your JS file -->
+    <script src="https://cdn.jsdelivr.net/npm/heic2any"></script>
+    
 </body>
 </html>

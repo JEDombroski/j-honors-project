@@ -1,0 +1,17 @@
+[
+    {
+        "title": "Event 1",
+        "description": "Description of Event 1",
+        "themes": ["Theme A", "Theme B"]
+    },
+    {
+        "title": "Event 2",
+        "description": "Description of Event 2",
+        "themes": ["Theme B", "Theme C"]
+    },
+    {
+        "title": "Event 3",
+        "description": "Description of Event 3",
+        "themes": ["Theme A"]
+    }
+]
