@@ -1,0 +1,39 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+#sidebar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  padding: 20px;
+  background-color: #f4f4f4;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  overflow-y: auto;
+  z-index: 10;
+}
+
+#graph {
+  width: 100vw;
+  height: 100vh;
+}
+
+.popup {
+  position: absolute;
+  display: none;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.popup.large {
+  width: 300px;
+  height: 200px;
+  pointer-events: auto;
+}

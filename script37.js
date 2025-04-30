@@ -38,15 +38,6 @@ let height = window.innerHeight;
     .style("position", "absolute") // Make sure the SVG is absolute
     .style("top", "0");
     
-    const links = [
-  { source: "student-institutional conflict", target: "chalking" },
-  { source: "student-institutional conflict", target: "inclusive language" },
-  { source: "chalking", target: "artifact1" },
-  { source: "chalking", target: "artifact2" },
-  { source: "inclusive language", target: "artifact3" },
-  { source: "inclusive language", target: "artifact4" },
-  // ...and so on
-];
 
 // Function to update the SVG dimensions and viewBox based on window size
 function updateViewBox() {

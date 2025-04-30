@@ -1,0 +1,15 @@
+{
+  "nodes": [
+    {"id": "main", "text": "Student Activism", "type": "primary"},
+    {"id": "secondary1", "text": "Institutional Response", "type": "secondary"},
+    {"id": "secondary2", "text": "Queer Community", "type": "secondary"},
+    {"id": "t1", "type": "tertiary", "hover": "Flyer from 1994", "detail": "Full scan of flyer, context, etc."},
+    {"id": "t2", "type": "tertiary", "hover": "Meeting Minutes", "detail": "Excerpt from 2001 LGBTQ+ task force."}
+  ],
+  "links": [
+    {"source": "main", "target": "secondary1"},
+    {"source": "main", "target": "secondary2"},
+    {"source": "secondary1", "target": "t1"},
+    {"source": "secondary2", "target": "t2"}
+  ]
+}

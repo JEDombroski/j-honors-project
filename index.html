@@ -1,250 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Exhibit</title>
-    <style>
-       html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-wrap: wrap; /* Allow wrapping of columns on smaller screens */
-}
+  <meta charset="UTF-8" />
+  <title>Floating Nodes with Tooltips, Text, Expandable Box, and Top Text</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
 
-.left-column {
-    flex: 1 1 20%; /* Left column takes up 20% of space, flexible */
-    background-color: white;
-    padding: 10px;
-    box-sizing: border-box;
-    position: relative;
-    overflow-wrap: break-word; /* Ensure text wraps properly */
-}
+    /* Top text area style */
+    #top-text {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      font-size: 30px;
+      color: #e2cfea;
+      z-index: 10;
+      visibility: visible; /* Ensure it's visible */
+      background-color: #240046; /* Background for visibility */
+    }
 
-.right-column {
-    flex: 1 1 80%; /* Right column takes up 80% of space, flexible */
-    height: 100%;
-    background-color: #f4f4f4;
-    position: relative;
-}
+    svg {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      background: #e2cfea;
+      margin-top: 60px; /* Ensure the SVG is below the top text area */
+    }
 
-        svg {
-            width: 100%;
-            height: 100%;
-            position: absolute; /* Ensure it fills the entire right column */
-            z-index: 0;
-        }
-        
-             /* Modal style */
-        #popupModal {
-            display: none; /* Initially hidden */
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Center the modal */
-            background-color: rgba(203, 195, 227, 1); /* Slight transparency */
-            padding: 20px;
-            width: 900px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            z-index: 9999; /* Ensure the modal is on top */
-            text-align: center;
-        }
+    /* Tooltip style */
+    .tooltip {
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px;
+      border-radius: 5px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      font-size: 14px;
+    }
 
-        /* Close button */
-        #closePopupBtn {
-            background-color: #25064c;
-            border: none;
-            color: white;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-top: 10px;
-        }
+    /* Modal style */
+    #modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+      max-width: 500px;
+      z-index: 1000;
+    }
 
-        #closePopupBtn:hover {
-            background-color: #ff0000;
-        }
+    #modal img {
+      max-width: 100%;
+      max-height: 300px;
+      display: block;
+      margin: 10px 0;
+    }
 
-        .tooltip {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 8px;
-            border-radius: 5px;
-            position: absolute;
-            z-index: 10;
-        }
-        
-       #event-list h2,
-#theme-name {
-    font-size: 1.2em; /* Adjust the font size to be more readable */
-    word-wrap: break-word; /* Ensure long text wraps */
-}
+    #modal .close-btn {
+      background-color: red;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      float: right;
+    }
 
-#event-list-items {
-    list-style-type: none;
-    padding: 0;
-}
-
-#event-list-items li {
-    margin: 5px 0;
-    word-wrap: break-word;
-}
-
+    /* Text style */
+    .node-text {
+      font-size: 12px;
+      fill: white;
+      text-anchor: middle;
+      pointer-events: none;
+    }
     
-    #eventModal {
-            display: none;  /* Hidden by default */
-            position: fixed; /* Fixed position to overlay on the screen */
-            top: 0%;
-            left: 25%;
-            background-color: rgba(0, 0, 0, 0.7); /* Dark background for modal */
-            z-index: 9999; /* Ensures modal is on top */
-            justify-content: center; /* Centers horizontally */
-            align-items: center; /* Centers vertically */
-            overflow: auto;
-        }
-
-        /* Modal content */
-        .modal-content {
-            position: fixed;
-            background-color: #fff;
-            padding: 20px;
-            max-width: 90%; /* Limit the width of the modal */
-            max-height: 90%; /* Limit the height of the modal */
-            overflow-y: auto; /* Allows scrolling if content overflows */
-        }
-
-   
-
-        /* Close button */
-        #closeBtn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 25px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* Image styling */
-        #modalPhotos img {
-            width: 50%;
-            max-width: 50vh; 
-            height: auto;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        /* Enlarge image on click */
-        #modalPhotos img.expanded {
-            width: 90%;
-            height: auto;
-            transform: scale(2); /* Increase scale to make it larger */
-            transition: transform 0.2s ease;
-        }
-        
-        #themeModal {
-    display: none; /* Hidden by default */
-    position: absolute;
-    top: 20%;
-    left: 5%;
-    width: 80%;
-    background: white;
-    border: 1px solid #ccc;
-    padding: 15px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    border-radius: 8px;
+    #left-panel {
+  position: fixed;
+  top: 103px; /* below the top bar */
+  left: 0;
+  width: 400px;
+  height: calc(100% - 60px);
+  background-color: #f4f4f4;
+  overflow-y: auto;
+  padding: 15px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  font-size: 16px;
+  line-height: 1.5;
+  z-index: 900;
 }
 
-.theme-modal-content {
-    position: relative;
-    padding: 20px;
+#node-image-container {
+  position: relative;
+  overflow: visible !important;
+  z-index: 1;
 }
 
-.close {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
+.modal-image {
+  max-width: 100%;
+  max-height: 300px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-    </style>
-    
+/* Modal image expanded state */
+.modal-image.fullscreen {
+  position: fixed; /* Fix the image in place */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the image */
+  max-width: 90vw; /* Max width of image */
+  max-height: 90vh; /* Max height of image */
+  width: auto;
+  height: auto;
+  z-index: 9999;
+  background-color: white;
+  border: 4px solid white;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  cursor: zoom-out;
+  transition: all 0.3s ease-in-out;
+  display: block;
+  overflow: visible; /* Make sure image can overflow */
+}
+
+/* Overlay for the large image */
+.overlay {
+  position: fixed;  /* Fixed position to cover the whole screen */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);  /* Semi-transparent background */
+  display: none;  /* Hidden by default */
+  justify-content: center;  /* Center content horizontally */
+  align-items: center;  /* Center content vertically */
+  z-index: 1000;  /* Make sure it appears above other content */
+}
+
+/* Style for the enlarged image */
+.large-image {
+  max-width: 90%;   /* Limit width to 90% of screen width */
+  max-height: 90%;  /* Limit height to 90% of screen height */
+  object-fit: contain;  /* Maintain aspect ratio */
+}
+
+
+/* Allow the body to scroll */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto; /* Allow full page scroll */
+}
+
+/* Modal background for the image */
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+  z-index: 9998; /* Behind the image */
+  display: block;
+  overflow: auto; /* Allow background to be scrollable */
+}
+
+/* Optional style for page body content */
+body {
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+
+  </style>
 </head>
 <body>
+body {
+  overflow: auto; /* Allow scrolling on the entire body */
+  position: relative;
+}
 
+  <!-- Top text area -->
+  <div id="top-text">
+    Uncovering the Queer History of St. Kate's 
+    <p style = "font-size: 14px"> J Dombroski </p>
+  </div>
+  
+ <div id="left-panel">
+ <h2 style="font-size: 18px; color: #240046;">How have opinions about LGBTQ+ issues at St. Kate's changed over time? </h2>
+  <h2 style = "font-size: 18px; color: #240046;"> How have they differed between students, faculty, and administration?</h2>
+  
+  <p style="font-size: 14px; color: #555, font-weight: bold;">St. Catherine University’s identities as a Catholic, women’s, and social justice oriented institution have long shaped the attitudes of its students, staff, faculty, and administration. For LGBTQ+ community members, these intersecting commitments represent an important part of their experiences at St. Kate’s, as they generate both conditions of support and tension for LGBTQ+ visibility on campus. </p>
 
-   
-    
-   <!-- Left column -->
-<div class="left-column">
-    <h1>Uncovering the Queer History of St. Kate's</h1>
-    <div id="event-list">
+  <p style="font-size:14px; color: #555, font-weight: bold;" > The St. Catherine University archives are host to over 300 documents, images, news articles, and other materials tracing the school’s history of queer visibility and resistance, covering a diversity of topics from queer student organization events to censored letters between a well known CSJ and an openly bisexual poet. </p>
 
-        <div id="theme-name"></div>
-        <ul id="event-list-items"></ul>
-    </div>
+<p style="font-size: 14px; color: #555, font-weight: bold;"> This digital exhibit uses some of these archival materials to portray two distinct moments of tension between students and administration: conflict over sidewalk chalking policies in the 1990s and debates over trans inclusivity continuing into the present day. </p>
+</p>
 
-    <!-- New Theme Modal (Initially Hidden) -->
-    <div id="themeModal">
-        <div class="theme-modal-content">
-            <span id="closeThemeModal" class="close">&times;</span>
-            <h2 id="modalThemeTitle"></h2>
-            <p id="modalThemeBlurb"></p>
-            <p id="modalThemeExtra"></p>
-        </div>
-    </div>
+  </p>
+</div>
+
+<div id="overlay" class="overlay">
+  <img id="large-image" class="large-image" src="" alt="Enlarged Image">
 </div>
 
 
-    <!-- Right column for SVG -->
-    <div class="right-column">
-        <!-- This is where the SVG visualization will be rendered -->
-        <svg></svg>
-    </div>
-    
-  <!-- Popup Modal -->
-    <div id="popupModal">
-        <h2>Welcome to this interactive exhibit! </h2>
-        <p>Here you will find items from the St. Catherine University archives reflecting the queer history of the college. 
+  <svg id="viz"></svg>
 
-<p>The goal of this project is to explore how St. Catherine University’s intersecting identities as a Catholic, women’s, and social justice oriented institution have shaped the attitudes of its students, staff, faculty, and administration about LGBTQ+ issues and identities. Further, it aims to illuminate how having a queer identity impacted the experiences of students and to reevaluate the relationships that women at St. Kate’s engaged in, recognizing historical norms around acceptable women’s relationships but also uncovering examples now perceived as instances of queerness. The Catholic identity of the university played a large role in its official viewpoints, often to the detriment of public acceptance of LGBTQ+ identities, though relationships that can be read as queer in the current day have been present, if hidden, over a long period in spite of this. Goals to empower women with minority identities and commitments to social justice have driven St. Kate’s to be increasingly more inclusive over time, though there is still room to grow.<p>
+  <!-- Tooltip container -->
+  <div id="tooltip" class="tooltip"></div>
 
-<b>Click on one of the larger labeled dots to see the items related to that theme. Hover over any of the smaller dots to see its title and date and click on it for more information and images of the document. Enjoy exploring!<p>
-        <button id="closePopupBtn">Close</button>
-    </div>
-    
-    <!-- Tooltip for displaying node information -->
-    <div class="tooltip"></div>
+  <!-- Modal container -->
+  <div id="modal">
+    <button class="close-btn" id="close-modal">X</button>
+    <h3 id="node-title"></h3>
+    <p id="node-description"></p>
+    <div id="node-image-container"></div>
+  </div>
+
+  <!-- Load D3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+ <script>
+  const width = window.innerWidth + 400;
+  const height = window.innerHeight + 20;
+
+  const nodes = [
+    { id: "node1", radius: 100, color: "#3c096c", label: "Student-Administration Tensions", titletext: "Student-Administration Tensions", info: "click to learn more", description: "Students at St. Catherine University have experienced both progress towards and barriers against LGBTQ+ inclusion and visibility as a result of their interactions with administration and the large goals of the institution. Students challenge the university to live up to its mission and stated ideals and the administration guides policy that has the power to constrain, protect, or empower students. In these two topics alone we see two different instances of tension both acting as an obstacle and bringing about change, although progress can be slow going and more recent demands have not yet been met." },
+    { id: "node2", radius: 75, color: "#5a189a", label: "Chalking", titletext: "Chalking", info: "click to learn more", description: "What began as a way for students to celebrate National Coming Out Day in 1994 sparked years of campus-wide dialogue over the right to chalk at St. Kate’s. Scrawling words on campus sidewalks turned from a warm-weather pastime to a debate over who is granted freedom of expression, visibility, and protection from hate speech at this institution. Years of student advocacy and the changing role of administration in this dispute culminated in a chalking policy being put in place in 2000, which still serves to manage the visibility of LGBTQ+ community members, and other marginalized populations." },
+    { id: "node3", radius: 75, color: "#5a189a", label: "Trans Inclusivity", titletext: "Trans Inclusivity", info: "click to learn more", description: "Forward movement of St. Kate’s history has brought with it a shift in focus of our LGBTQ+ activists. The rights and visibility of transgender students have replaced acceptance of queer women in the spotlight of LGBTQ+ issues on campus. An update to the admissions policy marked the beginning of ongoing conversation around inclusive language and student advocates calling out contradictions between official statements and lived realities for students of marginalized genders at a women’s college." },
+    { id: "node4", radius: 30, color: "#9d4edd", label: "", titletext: "1994: Chalking Washed Away", info: "1994: Chalking Washed Away", description: "On October 11, 1994, after an evening of celebratory chalking, members of Women Oriented Women (WOW, the college’s LGBT club at the time) awoke to find their positive statements already being washed away. The culprits: an administrative assistant to the president who mistook the chalk for graffiti and the environmental services crew that washed the rest of campus without confirming with administration after hearing complaints. This mistake, innocent or not, caused WOW members to feel “discouraged”, “beaten down”, “silenced”, and “disempowered”, and set in motion years of discussion about freedom of expression and LGBTQ+ visibility at St. Kate’s. \n \n Barnes, C. (1994, October 31). Celebration washed away. The St. Catherine Wheel, p. 2. ", image: "celebration_washed_Away.png"},
+    { id: "node5", radius: 30, color: "#9d4edd", label: "", titletext: "1995 & 1996: Counter-chalking", info: "1995 & 1996: Counter-chalking", description: "In 1995 and 1996 chalking for Coming Out Week was repeated and not erased. However, it was counterchalked, with statements going as far as stating that homosexuality should be punishable by death in the United States the way it is in other countries. Administration was no longer a suspect of silencing queer students, but a resource that students needed on their side to gain protection. \n \n Deutchman, S. and Greenwell, M. (1996, October 25). National Coming Out Week renews debate. St. Catherine Wheel, p. 5.", image: "renewed.png"},
+    { id: "node6", radius: 30, color: "#9d4edd", label: "", titletext: "1996 Student March", info: "1996 Student March", description: "On October 22, 1996, students marched to the presidents’ office to show intolerance of the hate speech used in counter-chalking, as well as the way queer students were generally treated around campus. Administration stated that they could not prevent future counter chalking, but had been and would continue to be in conversation with WOW to find a solution. What began as a tension with administration had turned into students calling on the power of the institution to stand with them and treat queer individuals more fairly. \n \n Sommer, A. (1996, November 8). Students march for tolerance. St. Catherine Wheel, p.1.",image: "march.png" },
+    { id: "node7", radius: 30, color: "#9d4edd", label: "", titletext: "1996 Condemnation of Hate Speech", info: "1996 Condemnation of Hate Speech", description: "In the same month as the counterchalking in 1996, CAGB, the student government, put out a statement condemning the act as hate speech, citing the code of conduct disallowing such actions, and stating that disagreements should be handled at student government meetings, not through anonymous hate speech. In December, a statement from the Dean of Students was finally published in the Wheel, echoing these same sentiments. Administration had promised to work with students on this issue, but progress was slow going.", image: "hatespeech.jpeg"},
+    { id: "node8", radius: 30, color: "#9d4edd", label: "", titletext: "1999-2000 Chalking Policy", info: "1999-2000 Chalking Policy", description: "In Fall of 1999, the results of the discussions called for in 1996 finally came to fruition. Chalking guidelines were proposed, requiring an “intent to chalk” form to be filed, placing some restrictions on who could chalk and where, and asking for a forum for discussion to be set up in addition to the chalk messaging. Administrators and student representatives assert that content will not be censored and restrictions are meant to protect rights of free expression, not constrain them. This policy was put in place in Spring of 2000 and has remained on the books with few changes in the last 25 years. \n \n Burger, C. and Berger, S. (1999, October 15). Student Reps preview chalking policy. The St. Catherine Wheel, p. 3. ", image: "policy.png" },
+    { id: "node9", radius: 30, color: "#9d4edd", label: "", titletext: "2007: Policy Impacts", info: "2007: Policy Impacts", description: "7 years following the establishment of the chalking policy, campus LGBTQ+ groups appear protected and empowered by its reach. The author of this article goes so far as to say that the conflicts between religious organizations and LGBTQ+ individuals do not exist here. Far from prior experiences of being silenced and beaten down by responses to chalking in the 90s, collaboration between student activists and administrators to write a protective policy was effective in facilitating queer visibility. \n \n Locke, M. (2007, October 22). Taking PRIDE in the community. The St. Catherine Wheel, p. 4.", image: "2007image.png"},
+    { id: "node10", radius: 30, color: "#9d4edd", label: "", titletext: "2013-2018 Work on Trans Recognition and Inclusion", info: "2013-2018 Work on Trans Recognition and Inclusion", description: "Around 2013, students and administrators began to realize that there needed to be a change in the language of our admissions policy to recognize trans and nonbinary students, and in 2015 a student created a curriculum for faculty and staff around trans inclusion, issues, and language. There is very little institutional record of this work, however, and efforts toward policy change did not begin to move forward until 2017. In 2018, an LGBTQIA+ working group was formed to work on an admissions policy, among other issues, and our current policy was quietly added that same year. \n \n Cross, A. (2019, May 2). In Transition: St. Kate’s implements new trans and non-binary acceptance policy. The St. Catherine Wheel, p. 6.", image: "pono.png"},
+    { id: "node11", radius: 30, color: "#9d4edd", label: "", titletext: "2018 Transgender and Nonbinary Student Admission Policy", info: "2018 Transgender and Nonbinary Student Admission Policy", description: "The Transgender and Nonbinary Student Admission Policy states that all individuals who identify as women can attend the College for Women, regardless of gender assigned at birth, as can non-binary and genderqueer students. The university recognizes the presence and contributions of people of all marginalized genders, and will encourage inclusive language and practices in community spaces, but will continue to use gendered language to honor the school’s history. This policy was one step towards progress for trans inclusion, but left the contradiction of asserting inclusion while excluding people of some marginalized genders, which student activists would seek to address. \n \n St. Catherine University. (2024). Transgender and non-binary students . St. Catherine University Academic Catalog. https://catalog.stkate.edu/policies/stu-non-acad/transgender-non-binary/?_gl=1", image: "admissionpolicy.png"},
+    { id: "node12", radius: 30, color: "#9d4edd", label: "", titletext: "2019 Policy Change Advocacy", info: "2019 Policy Change Advocacy", description: "In 2019, leaders of PRIDE (the campus LGBTQ+ club at that time) advocated for a change to the 2018 admissions policy. These students argued that a school founded on the idea of educating people of one marginalized gender should not be exclusionary towards people of other marginalized genders, calling it hypocritical to use harmful language when history has not been kind to trans and nonbinary people and more than women. The club leaders hoped that the policy could be changed to be more inclusive, and that this may combat misgendering, deadnaming, and a general lack of acceptance of trans students.  \n \n Robinson, E. (2019, December). An evolving binary, a stagnant campus: Where do we go from here?", image: "language.png"},
+    { id: "node13", radius: 30, color: "#9d4edd", label: "", titletext: "2022 Performative Activism and Transphobia", info: "2022 Performative Activism and Transphobia", description: "In 2022, trans students were interviewed about their experiences at St. Kate’s. Above all, they emphasize performative activism without true efforts to dismantle transphobia or address issues important to trans students. A Trans Day of Remembrance vigil was a good step for awareness, but these students cite difficult name change processes, a lack of safe LGBTQ+ spaces on campus, and too few gender-neutral bathrooms as some of the more prominent issues they would like to see addressed to improve day-to-day life. The institution is taking steps towards inclusion, but has much work still to do in the eyes of trans students. \n \n Keith, L. (2022, May 9). Welcome all – without distinction: Transphobia at St. Kate’s. The St. Catherine Wheel, p. 5.", image: "distinction"},
+    { id: "node14", radius: 30, color: "#9d4edd", label: "", titletext: "2022 Student Protest Demands", info: "2022 Student Protest Demands", description: "As part of a larger set of demands and subsequent protest, St Kate’s students called on administration to invest in a physical space for LGBTQIA+ students, not shared with other services, with dedicated staff, hired with the input of students. They also demanded an increase in gender neutral bathrooms and admissions reporting to prove alignment with the 2018 policy to not discriminate against gender diverse applicants. Unsatisfied with the treatment LGBTQIA+ members of the St. Kate’s community, students highlighted the tensions between their wishes and the University’s actions, equipped with a list of ways to improve this relationship. \n \n St. Kate’s students demand change. (2022, April 28). [Google Docs]. https://docs.google.com/document/d/1xE8MZTF-fz7iXP8b8qTMEAZRfbrDPl012wTVc6vV0Xw/edit?tab=t.0", image: "demands.png"},
+    { id: "node15", radius: 30, color: "#9d4edd", label: "", titletext: "2024 LGBTQIA+ Space", info: "2024 LGBTQIA+ Space", description:"In the wake of a 2022 protest demand for a dedicated LGBTQ+ space, students were told that the Queer Student Alliance space would be moved into the Center for Women – a change that did not meet the demands. The space was small and lacked privacy, staff did not know ahead of time that this change was going to be made, and students were not consulted. Locating a space meant to be open to trans students within the gendered Center for Women was criticized as un-affirming. Tension between administration and students persists as students do not see their needs being prioritized. \n \n Timlin, M. (2024, April 28). QSA space to move into Center for Women. The St. Catherine Wheel. https://www.stkateswheel.org/home/qsa-space-to-move-into-center-for-women", image: "qsaspace.png"}
+  ].map(node => ({
+  ...node,
+  x: Math.random() * window.innerWidth,
+  y: Math.random() * window.innerHeight
+}));
+
+  const links = [
+    { source: "node1", target: "node2" },
+    { source: "node1", target: "node3" },
+    { source: "node2", target: "node4" },
+    { source: "node2", target: "node5" },
+    { source: "node2", target: "node6"},
+    { source: "node2", target: "node7" },
+    { source: "node2", target: "node8" },
+    { source: "node2", target: "node9" },
+    { source: "node3", target: "node10" },
+    { source: "node3", target: "node11" },
+    { source: "node3", target: "node12" },
+    { source: "node3", target: "node13" },
+    { source: "node3", target: "node14" },
+    { source: "node3", target: "node15" }
+  ];
+
+  const svg = d3.select("#viz");
+
+  const simulation = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id(d => d.id).distance(150))
+    .force("charge", d3.forceManyBody().strength(-150))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("collision", d3.forceCollide().radius(d => d.radius + 5));
+
+  const link = svg.selectAll("line")
+    .data(links)
+    .enter()
+    .append("line")
+    .attr("stroke", "#aaa")
+    .attr("stroke-width", 2);
+
+  const node = svg.selectAll("circle")
+    .data(nodes)
+    .enter()
+    .append("circle")
+    .attr("r", d => d.radius)
+    .attr("fill", d => d.color)
+    .call(d3.drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended)
+    );
+
+  const nodeText = svg.selectAll(".node-text")
+    .data(nodes)
+    .enter()
+    .append("text")
+    .attr("class", "node-text")
+    .attr("dy", ".35em")
+    .text(d => d.label);
+
+  const tooltip = d3.select("#tooltip");
+
+  node.on("mouseover", (event, d) => {
+    tooltip.style("opacity", 1)
+      .html(d.info)
+      .style("left", (event.pageX + 10) + "px")
+      .style("top", (event.pageY + 10) + "px");
+  })
+  .on("mouseout", () => {
+    tooltip.style("opacity", 0);
+  });
+
+  node.on("click", (event, d) => {
+    // Update modal content
+    document.getElementById("node-title").innerText = d.titletext;
+    document.getElementById("node-description").innerText = d.description;
+
+    const imageContainer = document.getElementById("node-image-container");
+
+    if (d.image) {
+      const img = document.createElement("img");
+      img.src = d.image;
+      img.alt = d.label;
+      img.classList.add("modal-image");
+
+      img.addEventListener("click", () => {
+  // Toggle the zoom on each click (this will increase scale beyond original)
+  let scale = img.classList.contains("zoomed-in") ? 1 : 2;  // Toggle between 1 and 2 times original size
+  
+  img.classList.toggle("zoomed-in");
+  img.style.transform = `scale(${scale})`;  // Apply scale transformation
+});
 
 
 
+      imageContainer.innerHTML = "";
+      imageContainer.appendChild(img);
+    } else {
+      imageContainer.innerHTML = "";
+    }
 
-<!-- Modal Box -->
-<div id="eventModal" class="modal">
-    <div class="modal-content">
-        <span id="closeBtn" class="close">&times;</span> <!-- Close button -->
-        <h2 id="modalTitle"></h2> <!-- Event title -->
-        <p id="modalDate"></p> <!-- Event date -->
-        <p id="modalDescription"></p> <!-- Event description -->
-        <div id="modalPhotos"></div> <!-- Container for photos -->
-    </div>
-</div>
+    // Show modal
+    document.getElementById("modal").style.display = "block";
+  });
 
+  document.getElementById("close-modal").addEventListener("click", function () {
+    document.getElementById("modal").style.display = "none";
+  });
 
+  simulation.on("tick", () => {
+    link
+      .attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
 
-    <!-- Link to the JavaScript file -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="script.js"></script> <!-- Link to your JS file -->
-    <script src="https://cdn.jsdelivr.net/npm/heic2any"></script>
-    
+    node
+      .attr("cx", d => Math.max(d.radius, Math.min(width - d.radius, d.x)))
+      .attr("cy", d => Math.max(d.radius, Math.min(height - d.radius, d.y)));
+
+    nodeText
+      .attr("x", d => Math.max(d.radius, Math.min(width - d.radius, d.x)))
+      .attr("y", d => Math.max(d.radius, Math.min(height - d.radius, d.y)));
+  });
+
+  function dragstarted(event, d) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+
+  function dragended(event, d) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+</script>
+
 </body>
 </html>
